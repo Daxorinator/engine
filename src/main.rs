@@ -1,9 +1,3 @@
-use winit::{
-    event::{Event, WindowEvent},
-    event_loop::{ControlFlow, EventLoop},
-    window::WindowBuilder,
-};
-
 use luminance_glutin::{
     GlutinSurface,
     Surface as _,
