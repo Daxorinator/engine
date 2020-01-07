@@ -154,6 +154,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 name = "engine"
 version = "0.0.1"
 dependencies = [
+ "glutin 0.21.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "luminance 0.38.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "luminance-derive 0.5.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "luminance-glutin 0.8.0 (registry+https://github.com/rust-lang/crates.io-index)",

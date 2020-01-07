@@ -12,5 +12,6 @@ luminance = "0.38.0"
 luminance-derive = "0.5"
 luminance-windowing = "0.8.1"
 luminance-glutin = "0.8.0"
+glutin = "*"
 
 [features]

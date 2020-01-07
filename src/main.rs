@@ -1,45 +1,28 @@
 use luminance_glutin::{GlutinSurface, Surface as _, WindowDim, WindowOpt};
+use glutin::{Event, WindowEvent};
 
 use std::process::exit;
-mod game_loop;
 
 fn main() {
-    let surface = GlutinSurface::new(
+    let mut surface = GlutinSurface::new(
         WindowDim::Windowed(640, 480),
         "Testing",
         WindowOpt::default(),
-    );
+    ).expect("Error creating GlutinSurface");
 
-    match surface {
-        Ok(surface) => {}
-
-        Err(e) => {
-            eprintln!("Cannot create a surface!\n{:?}", e);
-            exit(1);
-        }
-    }
-}
-
-fn main_loop(mut surface: GlutinSurface) {
     'app: loop {
+        // For all the events on this surface:
+        surface.event_loop.poll_events(
+            |event| {
+                if let Event::WindowEvent { event, .. } = event {
+                    match event {
+                        //Break the main loop if window is closed
+                        WindowEvent::CloseRequested | WindowEvent::Destroyed => std::process::exit(1),
 
-        // handle events
-        for event in surface.poll_events() {
-            match event {
-                WindowEvent::Close |
-                WindowEvent::Key(
-                    Key::Escape, _,
-                    Action::Release, _
-                ) => {
-                    break 'app
+                        _ => ()
+                    }
                 }
-                _ => (),
             }
-        }
-
-        // rendering code goes here
-
-        // swap buffer chains
-        surface.swap_buffers();
+        )
     }
 }
