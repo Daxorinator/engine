@@ -1,14 +1,25 @@
 use luminance_glutin::{GlutinSurface, Surface as _, WindowDim, WindowOpt};
 use glutin::{Event, WindowEvent};
 
-use std::process::exit;
+use luminance::{
+    context::GraphicsContext as _
+};
+
+use std::{
+    process::exit,
+    time::Instant
+};
 
 fn main() {
+
     let mut surface = GlutinSurface::new(
         WindowDim::Windowed(640, 480),
         "Testing",
         WindowOpt::default(),
     ).expect("Error creating GlutinSurface");
+
+    let start_t = Instant::now();
+    let back_buffer = surface.back_buffer().expect("Couldn't access back-buffer!");
 
     'app: loop {
         // For all the events on this surface:
@@ -23,6 +34,9 @@ fn main() {
                     }
                 }
             }
-        )
+        );
+
+
+        surface.swap_buffers();
     }
 }
