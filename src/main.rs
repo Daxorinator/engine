@@ -35,24 +35,25 @@ pub struct Vertex {
     color: VertexRGB,
 }
 
-const VERTICES: [Vertex; 3] = [
-    Vertex {
-        position: VertexPosition::new([-0.5, -0.5]),
-        color: VertexRGB::new([240, 0, 0]),
-    },
-    Vertex {
-        position: VertexPosition::new([0.5, -0.5]),
-        color: VertexRGB::new([0, 240, 0]),
-    },
-    Vertex {
-        position: VertexPosition::new([0.0, 0.5]),
-        color: VertexRGB::new([0, 0, 240]),
-    }
-];
-
-
 //Application Entry point
 fn main() {
+
+    //Define verticies for first triangle
+    //Defined by array of 3 * Vertex with VertexPosition and VertexRGB
+    const VERTICES: [Vertex; 3] = [
+        Vertex {
+            position: VertexPosition::new([-0.5, -0.5]),
+            color: VertexRGB::new([240, 0, 0]),
+        },
+        Vertex {
+            position: VertexPosition::new([0.5, -0.5]),
+            color: VertexRGB::new([0, 240, 0]),
+        },
+        Vertex {
+            position: VertexPosition::new([0.0, 0.5]),
+            color: VertexRGB::new([0, 0, 240]),
+        }
+    ];
 
     //Open Window and grab GlutinSurface for OpenGL
     let mut surface = GlutinSurface::new(
@@ -61,12 +62,18 @@ fn main() {
         WindowOpt::default(),
     ).expect("Error creating GlutinSurface");
 
+    //Represent a triangle using TessBuilder to make a Tess that describes the mesh.
+    //Target the GlutinSurface, add the defined Verticies, set the mode.
+    //Mode::Point renders individual points, Mode::Triangle renders as a triangle
+    let triangle = TessBuilder::new(&mut surface)
+        .add_vertices(VERTICES)
+        .set_mode(Mode::Triangle)
+        .build().expect("Could not build triangle mesh\n!");
 
     //Time stuff for the rainbow background
     let start_t = Instant::now();
     //Open a back buffer; Will get swapped to front buffer when event-loop finishes and calls for Render
     let back_buffer = surface.back_buffer().expect("Couldn't access back-buffer!");
-
 
     //Main game loop
     'app: loop {
