@@ -35,6 +35,13 @@ pub struct Vertex {
     color: VertexRGB,
 }
 
+// Include the Vertex Shader as a string for passing to OpenGL
+const VS_STR: &str = include_str!("vertex-shader.glsl");
+
+// Include the Fragment Shader as a string for passing to OpenGL
+const FS_STR: &str = include_str!("fragment-shader.glsl");
+
+
 //Application Entry point
 fn main() {
 
