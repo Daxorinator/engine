@@ -18,6 +18,37 @@ use std::{
 };
 
 
+//Define innards of Vertex type through VertexSemantics
+#[derive(Copy, Clone, Debug, Semantics)]
+pub enum VertexSemantics {
+    #[sem(name = "position", repr = "[f32; 2]", wrapper = "VertexPosition")]
+    Position,
+    #[sem(name = "color", repr = "[u8; 3]", wrapper = "VertexRGB")]
+    Color,
+}
+
+#[derive(Vertex)]
+#[vertex(sem = "VertexSemantics")]
+pub struct Vertex {
+    position: VertexPosition,
+    #[vertex(normalized = "true")]
+    color: VertexRGB,
+}
+
+const VERTICES: [Vertex; 3] = [
+    Vertex {
+        position: VertexPosition::new([-0.5, -0.5]),
+        color: VertexRGB::new([240, 0, 0]),
+    },
+    Vertex {
+        position: VertexPosition::new([0.5, -0.5]),
+        color: VertexRGB::new([0, 240, 0]),
+    },
+    Vertex {
+        position: VertexPosition::new([0.0, 0.5]),
+        color: VertexRGB::new([0, 0, 240]),
+    }
+];
 
 
 //Application Entry point
