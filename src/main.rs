@@ -4,7 +4,11 @@ use glutin::{Event, WindowEvent};
 use luminance::{
     context::GraphicsContext as _,
     pipeline::PipelineState,
-    tess::{Mode, TessBuilder},
+    tess::{Mode, TessBuilder, TessSliceIndex as _},
+    shader::{
+        program::Program,
+    },
+    render_state::RenderState,
 };
 
 use luminance_derive::{
@@ -75,14 +79,23 @@ fn main() {
     let triangle = TessBuilder::new(&mut surface)
         .add_vertices(VERTICES)
         .set_mode(Mode::Triangle)
-        .build().expect("Could not build triangle mesh\n!");
+        .build().expect("Could not build triangle mesh!\n");
 
-    //Time stuff for the rainbow background
+    // Time stuff for the rainbow background
     let start_t = Instant::now();
-    //Open a back buffer; Will get swapped to front buffer when event-loop finishes and calls for Render
+    // Open a back buffer; Will get swapped to front buffer when event-loop finishes and calls for Render
     let back_buffer = surface.back_buffer().expect("Couldn't access back-buffer!");
 
-    //Main game loop
+    // Define a shader program for running shader stages using luminance::shader::program::Program type
+    // Tell the program to use Vertex Semantics type so it knows what a vertex is, enables checking if program is compatible with Tess type at compile-time
+    // Catch any errors with an expect and ignore_warnings from the shader program creation, allowing us to grab the actual Program
+    // These warnings can be caught and viewed later, for now we don't need to.
+    let program: Program<VertexSemantics, (), ()> = Program::from_strings(None, VS_STR, None, FS_STR)
+        .expect("Could not create Shader Program!\n").ignore_warnings();
+    
+    
+    
+        //Main game loop
     'app: loop {
         // For all the events on this surface:
         surface.event_loop.poll_events(
@@ -117,7 +130,19 @@ fn main() {
         surface.pipeline_builder().pipeline(
             &back_buffer,
             &PipelineState::default().set_clear_color(color),
-            |_, _| (),
+            //Define a shading gate
+            |_, mut shading_gate| {
+                //Shade using the shading gate on the program, also defines a render gate
+                //This render gate allows to create render nodes that share RenderState's for all lower nodes in the graphics pipeline
+                //We use the default RenderState for now.
+                shading_gate.shade(&program, |_, mut render_gate| {
+                    //Render using the render gate, using the default RenderState and then create a tesselation gate
+                    //The tesselation gate allows to actually render tesselations, by creating a TessSlice out of our Tess
+                    render_gate.render(&RenderState::default(), |mut tesselation_gate| {
+                        tesselation_gate.render(triangle.slice(..));
+                    });
+                });
+            },
         );
 
         //Swap the buffers; in other words do the render.
